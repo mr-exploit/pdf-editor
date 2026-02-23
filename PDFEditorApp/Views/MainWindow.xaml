@@ -1,0 +1,110 @@
+<Window x:Class="PDFEditorApp.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:PDFEditorApp.ViewModels"
+        xmlns:views="clr-namespace:PDFEditorApp.Views"
+        mc:Ignorable="d"
+        Title="PDF Editor"
+        Height="700" Width="1100"
+        MinHeight="600" MinWidth="900"
+        Background="#F3F3F3"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:ConvertViewModel}">
+            <views:ConvertView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CompressViewModel}">
+            <views:CompressView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MergeViewModel}">
+            <views:MergeView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SplitViewModel}">
+            <views:SplitView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ReorganizeViewModel}">
+            <views:ReorganizeView />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="28"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#0078D4">
+            <StackPanel Orientation="Horizontal" Margin="16,0">
+                <TextBlock Text="&#x1F4C4;" FontSize="22" VerticalAlignment="Center" Foreground="White" Margin="0,0,10,0"/>
+                <TextBlock Text="PDF Editor" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Navigation -->
+            <Border Grid.Column="0" Background="#2C2C2C">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,8">
+                        <TextBlock Text="CONVERT" Foreground="#888" FontSize="10" FontWeight="Bold" Margin="16,8,0,4"/>
+
+                        <Button Content="PDF &#x2192; Word" Tag="{x:Static vm:NavigationItem.ConvertPdfToWord}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.ConvertPdfToWord}"
+                                Style="{StaticResource NavButtonStyle}"/>
+                        <Button Content="PDF &#x2192; Excel" Tag="{x:Static vm:NavigationItem.ConvertPdfToExcel}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.ConvertPdfToExcel}"
+                                Style="{StaticResource NavButtonStyle}"/>
+                        <Button Content="PDF &#x2192; PowerPoint" Tag="{x:Static vm:NavigationItem.ConvertPdfToPpt}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.ConvertPdfToPpt}"
+                                Style="{StaticResource NavButtonStyle}"/>
+                        <Button Content="Word &#x2192; PDF" Tag="{x:Static vm:NavigationItem.ConvertWordToPdf}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.ConvertWordToPdf}"
+                                Style="{StaticResource NavButtonStyle}"/>
+                        <Button Content="Excel &#x2192; PDF" Tag="{x:Static vm:NavigationItem.ConvertExcelToPdf}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.ConvertExcelToPdf}"
+                                Style="{StaticResource NavButtonStyle}"/>
+                        <Button Content="PowerPoint &#x2192; PDF" Tag="{x:Static vm:NavigationItem.ConvertPptToPdf}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.ConvertPptToPdf}"
+                                Style="{StaticResource NavButtonStyle}"/>
+
+                        <Separator Background="#444" Margin="8,8"/>
+                        <TextBlock Text="TOOLS" Foreground="#888" FontSize="10" FontWeight="Bold" Margin="16,4,0,4"/>
+
+                        <Button Content="Compress PDF" Tag="{x:Static vm:NavigationItem.Compress}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.Compress}"
+                                Style="{StaticResource NavButtonStyle}"/>
+                        <Button Content="Merge PDF" Tag="{x:Static vm:NavigationItem.Merge}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.Merge}"
+                                Style="{StaticResource NavButtonStyle}"/>
+                        <Button Content="Split PDF" Tag="{x:Static vm:NavigationItem.Split}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.Split}"
+                                Style="{StaticResource NavButtonStyle}"/>
+                        <Button Content="Reorganize PDF" Tag="{x:Static vm:NavigationItem.Reorganize}"
+                                Command="{Binding NavigateToCommand}" CommandParameter="{x:Static vm:NavigationItem.Reorganize}"
+                                Style="{StaticResource NavButtonStyle}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Content Area -->
+            <Border Grid.Column="1" Background="White" Margin="0">
+                <ContentPresenter Content="{Binding CurrentViewModel}"/>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#E0E0E0" BorderThickness="0,1,0,0" BorderBrush="#CCCCCC">
+            <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="10,0" FontSize="12" Foreground="#444"/>
+        </Border>
+    </Grid>
+</Window>

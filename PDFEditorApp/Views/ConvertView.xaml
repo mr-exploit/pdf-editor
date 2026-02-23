@@ -1,0 +1,98 @@
+<UserControl x:Class="PDFEditorApp.Views.ConvertView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:PDFEditorApp.Core.Models">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" Foreground="#0078D4" Margin="0,0,0,16"/>
+
+        <!-- Drop Zone -->
+        <Border Grid.Row="1" BorderBrush="#0078D4" BorderThickness="2" CornerRadius="8"
+                Background="#F0F8FF" Padding="20" Margin="0,0,0,16"
+                AllowDrop="True" Drop="DropZone_Drop" DragOver="DropZone_DragOver">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="&#x1F4C2;" FontSize="40" HorizontalAlignment="Center"/>
+                <TextBlock Text="Drag &amp; Drop files here" FontSize="14" HorizontalAlignment="Center" Foreground="#555" Margin="0,8,0,4"/>
+                <TextBlock Text="or" FontSize="12" HorizontalAlignment="Center" Foreground="#888"/>
+                <Button Content="Browse Files" Command="{Binding AddFilesCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,8,0,0"
+                        HorizontalAlignment="Center"
+                        AutomationProperties.Name="Browse files to convert"/>
+            </StackPanel>
+        </Border>
+
+        <!-- File List -->
+        <ListView Grid.Row="2" ItemsSource="{Binding Files}" Margin="0,0,0,16" BorderBrush="#DDD" BorderThickness="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="File Name" Width="280" DisplayMemberBinding="{Binding FileName}"/>
+                    <GridViewColumn Header="Size" Width="90" DisplayMemberBinding="{Binding FileSizeDisplay}"/>
+                    <GridViewColumn Header="Status" Width="100" DisplayMemberBinding="{Binding Status}"/>
+                    <GridViewColumn Header="Progress" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ProgressBar Value="{Binding Progress}" Maximum="100" Height="14" Width="140"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="" Width="60">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="&#x2715;" Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                        CommandParameter="{Binding}" Background="Transparent" BorderThickness="0" Foreground="#D32F2F" FontSize="14" Cursor="Hand"
+                                        AutomationProperties.Name="Remove file"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- Output Folder -->
+        <Grid Grid.Row="3" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Output Folder:" VerticalAlignment="Center" Margin="0,0,10,0" FontSize="13"/>
+            <TextBox Grid.Column="1" Text="{Binding OutputFolder, UpdateSourceTrigger=PropertyChanged}"
+                     Padding="6,4" FontSize="13" BorderBrush="#DDD"
+                     AutomationProperties.Name="Output folder path"/>
+            <Button Grid.Column="2" Content="Browse" Command="{Binding BrowseOutputFolderCommand}"
+                    Style="{StaticResource SecondaryButtonStyle}" Margin="8,0,0,0"
+                    AutomationProperties.Name="Browse output folder" ToolTip="Select output folder"/>
+        </Grid>
+
+        <!-- Overall Progress -->
+        <ProgressBar Grid.Row="4" Value="{Binding OverallProgress}" Maximum="100" Height="16" Margin="0,0,0,12"/>
+
+        <!-- Actions -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="0,0,16,0" FontSize="12" Foreground="#666"/>
+            <Button Content="Clear" Command="{Binding ClearFilesCommand}"
+                    Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"
+                    AutomationProperties.Name="Clear file list" ToolTip="Clear all files"/>
+            <Button Content="Open Output Folder" Command="{Binding OpenOutputFolderCommand}"
+                    Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"
+                    AutomationProperties.Name="Open output folder" ToolTip="Open the output folder"/>
+            <Button Content="Cancel" Command="{Binding CancelConversionCommand}"
+                    IsEnabled="{Binding IsBusy}"
+                    Style="{StaticResource DangerButtonStyle}" Margin="0,0,8,0"
+                    AutomationProperties.Name="Cancel conversion" ToolTip="Cancel the conversion"/>
+            <Button Content="&#x25B6; Start Convert" Command="{Binding StartConversionCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolConverter}}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    AutomationProperties.Name="Start conversion" ToolTip="Start converting files"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
