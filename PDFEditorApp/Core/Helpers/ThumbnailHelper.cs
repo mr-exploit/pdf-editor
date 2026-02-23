@@ -25,7 +25,7 @@ public static class ThumbnailHelper
                 new System.Windows.Media.Typeface("Segoe UI"),
                 12,
                 System.Windows.Media.Brushes.Gray,
-                96);
+                System.Windows.Media.VisualTreeHelper.GetDpi(drawingVisual).PixelsPerDip);
             ctx.DrawText(ft, new Point((width - ft.Width) / 2, (height - ft.Height) / 2));
         }
 

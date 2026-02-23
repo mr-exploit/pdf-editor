@@ -90,7 +90,7 @@ public partial class ReorganizeViewModel : ObservableObject
     [RelayCommand]
     private void SortAscending()
     {
-        var sorted = Pages.OrderBy(p => p.OriginalPageIndex).ToList();
+        var sorted = Pages.OrderBy(p => p.CurrentDisplayIndex).ToList();
         Pages.Clear();
         foreach (var p in sorted) Pages.Add(p);
         UpdatePageIndices();
@@ -100,7 +100,7 @@ public partial class ReorganizeViewModel : ObservableObject
     [RelayCommand]
     private void SortDescending()
     {
-        var sorted = Pages.OrderByDescending(p => p.OriginalPageIndex).ToList();
+        var sorted = Pages.OrderByDescending(p => p.CurrentDisplayIndex).ToList();
         Pages.Clear();
         foreach (var p in sorted) Pages.Add(p);
         UpdatePageIndices();
