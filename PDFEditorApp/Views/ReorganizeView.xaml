@@ -1,0 +1,100 @@
+<UserControl x:Class="PDFEditorApp.Views.ReorganizeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Reorganize PDF" FontSize="22" FontWeight="SemiBold" Foreground="#0078D4" Margin="0,0,0,16"/>
+
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12">
+            <Button Content="&#x1F4C2; Open PDF" Command="{Binding OpenFileCommand}"
+                    Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"
+                    AutomationProperties.Name="Open PDF file" ToolTip="Open a PDF file to reorganize"/>
+            <Button Content="&#x2795; Add PDF" Command="{Binding AddFromAnotherPdfCommand}"
+                    IsEnabled="{Binding HasFile}"
+                    Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"
+                    AutomationProperties.Name="Add pages from another PDF" ToolTip="Insert pages from another PDF"/>
+            <Separator Width="1" Background="#DDD" Margin="4,0"/>
+            <Button Content="&#x1F53C; Sort A&#x2192;Z" Command="{Binding SortAscendingCommand}"
+                    IsEnabled="{Binding HasFile}"
+                    Style="{StaticResource SecondaryButtonStyle}" Margin="8,0,8,0"
+                    AutomationProperties.Name="Sort pages ascending" ToolTip="Sort pages ascending"/>
+            <Button Content="&#x1F53D; Sort Z&#x2192;A" Command="{Binding SortDescendingCommand}"
+                    IsEnabled="{Binding HasFile}"
+                    Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"
+                    AutomationProperties.Name="Sort pages descending" ToolTip="Sort pages descending"/>
+            <Separator Width="1" Background="#DDD" Margin="4,0"/>
+            <Button Content="&#x1F5D1;&#xFE0F; Delete Selected" Command="{Binding DeleteSelectedPagesCommand}"
+                    IsEnabled="{Binding HasFile}"
+                    Style="{StaticResource DangerButtonStyle}" Margin="8,0,0,0"
+                    AutomationProperties.Name="Delete selected pages" ToolTip="Delete selected pages"/>
+        </StackPanel>
+
+        <!-- Thumbnail Grid -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Pages}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="130" Height="180" Margin="8" CornerRadius="4"
+                                BorderThickness="2" Cursor="Hand"
+                                AutomationProperties.Name="{Binding CurrentDisplayIndex, StringFormat='Page {0}'}">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="BorderBrush" Value="#DDD"/>
+                                    <Setter Property="Background" Value="White"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="BorderBrush" Value="#0078D4"/>
+                                            <Setter Property="Background" Value="#E8F4FF"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Border.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                              Command="{Binding DataContext.TogglePageSelectionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                              CommandParameter="{Binding}"/>
+                            </Border.InputBindings>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Image Grid.Row="0" Source="{Binding Thumbnail}" Stretch="Uniform" Margin="8"/>
+                                <TextBlock Grid.Row="1" Text="{Binding CurrentDisplayIndex, StringFormat='Page {0}'}"
+                                           HorizontalAlignment="Center" FontSize="11" Foreground="#666" Margin="0,0,0,6"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <ProgressBar Grid.Row="3" Value="{Binding SaveProgress}" Maximum="100" Height="16" Margin="0,12,0,12"/>
+
+        <!-- Save Actions -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="0,0,16,0" FontSize="12" Foreground="#666"/>
+            <Button Content="&#x1F4BE; Save As" Command="{Binding SaveAsCommand}"
+                    IsEnabled="{Binding HasFile}"
+                    Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"
+                    AutomationProperties.Name="Save as new file" ToolTip="Save reorganized PDF as a new file"/>
+            <Button Content="&#x1F4BE; Save (Overwrite)" Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding HasFile}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    AutomationProperties.Name="Save overwrite original" ToolTip="Overwrite the original file"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

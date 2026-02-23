@@ -1,0 +1,91 @@
+<UserControl x:Class="PDFEditorApp.Views.CompressView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:services="clr-namespace:PDFEditorApp.Core.Services">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Compress PDF" FontSize="22" FontWeight="SemiBold" Foreground="#0078D4" Margin="0,0,0,16"/>
+
+        <!-- Drop Zone -->
+        <Border Grid.Row="1" BorderBrush="#0078D4" BorderThickness="2" CornerRadius="8"
+                Background="#F0F8FF" Padding="20" Margin="0,0,0,16"
+                AllowDrop="True" Drop="DropZone_Drop" DragOver="DropZone_DragOver">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="&#x1F5DC;&#xFE0F;" FontSize="40" HorizontalAlignment="Center"/>
+                <TextBlock Text="Drag &amp; Drop PDF files here" FontSize="14" HorizontalAlignment="Center" Foreground="#555" Margin="0,8,0,4"/>
+                <Button Content="Browse Files" Command="{Binding AddFilesCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,8,0,0"
+                        HorizontalAlignment="Center"
+                        AutomationProperties.Name="Browse PDF files to compress"/>
+            </StackPanel>
+        </Border>
+
+        <!-- File List -->
+        <ListView Grid.Row="2" ItemsSource="{Binding Files}" Margin="0,0,0,16" BorderBrush="#DDD" BorderThickness="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="File Name" Width="280" DisplayMemberBinding="{Binding FileName}"/>
+                    <GridViewColumn Header="Size" Width="100" DisplayMemberBinding="{Binding FileSizeDisplay}"/>
+                    <GridViewColumn Header="Status" Width="100" DisplayMemberBinding="{Binding Status}"/>
+                    <GridViewColumn Header="Progress" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ProgressBar Value="{Binding Progress}" Maximum="100" Height="14" Width="140"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="" Width="60">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="&#x2715;" Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                        CommandParameter="{Binding}" Background="Transparent" BorderThickness="0" Foreground="#D32F2F" FontSize="14" Cursor="Hand"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- Options -->
+        <Grid Grid.Row="3" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Compression:" VerticalAlignment="Center" Margin="0,0,10,0" FontSize="13"/>
+            <ComboBox Grid.Column="1" ItemsSource="{Binding CompressionLevels}"
+                      SelectedItem="{Binding SelectedLevel}"
+                      Padding="8,4" FontSize="13"
+                      AutomationProperties.Name="Compression level"/>
+            <TextBlock Grid.Column="2" Text="Output Folder:" VerticalAlignment="Center" Margin="20,0,10,0" FontSize="13"/>
+            <TextBox Grid.Column="3" Text="{Binding OutputFolder, UpdateSourceTrigger=PropertyChanged}"
+                     Padding="6,4" FontSize="13" BorderBrush="#DDD"/>
+            <Button Grid.Column="4" Content="Browse" Command="{Binding BrowseOutputFolderCommand}"
+                    Style="{StaticResource SecondaryButtonStyle}" Margin="8,0,0,0"/>
+        </Grid>
+
+        <ProgressBar Grid.Row="4" Value="{Binding OverallProgress}" Maximum="100" Height="16" Margin="0,0,0,12"/>
+
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="0,0,16,0" FontSize="12" Foreground="#666"/>
+            <Button Content="Clear" Command="{Binding ClearFilesCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+            <Button Content="Open Output Folder" Command="{Binding OpenOutputFolderCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
+            <Button Content="Cancel" Command="{Binding CancelCompressionCommand}" IsEnabled="{Binding IsBusy}" Style="{StaticResource DangerButtonStyle}" Margin="0,0,8,0"/>
+            <Button Content="&#x25B6; Compress" Command="{Binding StartCompressionCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolConverter}}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    AutomationProperties.Name="Start compression" ToolTip="Start compressing PDF files"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
